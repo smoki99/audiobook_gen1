@@ -1,0 +1,417 @@
+{
+  "default": {
+    "reference_audio": "voices/neutral.wav",
+    "reference_text": "Dies ist eine normale, neutrale Aussage ohne besondere Emotion.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "chunk_length": 300,
+    "max_new_tokens": 1024,
+    "output_format": "wav",
+    "comment": "Standard voice - default"
+  },
+  "calm": {
+    "reference_audio": "voices/calm.wav",
+    "reference_text": "Alles ist ruhig und friedlich, ganz entspannt und gelassen.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - calm"
+  },
+  "neutral": {
+    "reference_audio_set": [
+      ["voices/neutral.wav", "Dies ist eine normale, neutrale Aussage ohne besondere Emotion."],
+      ["voices/neutral1.wav", "Mara lag in ihrem alten Einzelbett, dem mit der verblichenen Tagesdecke mit den kleinen Rosen drauf."],
+      ["voices/neutral2.wav", "Dieselbe Decke, unter der sie als Kind gelegen und sich Geschichten von Prinzessinnen und Drachen erzählt hatte."],
+      ["voices/neutral3.wav", "Nur dass die Rosen jetzt atmeten. Ganz langsam, kaum merklich, wie kleine rosa Lungen, die sich hoben und senkten."]
+    ],
+    "temperature": 0.9,
+    "top_p": 0.9,
+    "repetition_penalty": 1.05,
+    "comment": "Standard emotion - neutral"
+  },
+  "happy": {
+    "reference_audio": "voices/happy.wav",
+    "reference_text": "Das ist wunderbar und macht mich richtig glücklich!",
+    "temperature": 0.6,
+    "top_p": 0.7,
+    "repetition_penalty": 1.2,
+    "comment": "Standard emotion - happy"
+  },
+  "sad": {
+    "reference_audio": "voices/sad.wav",
+    "reference_text": "Leider ist das sehr traurig und macht mich betroffen.",
+    "temperature": 0.6,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Standard emotion - sad"
+  },
+  "female": {
+    "reference_audio": "voices/female.wav",
+    "reference_text": "Ich muss dir etwas gestehen mein Liebster.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - female (deprecated for characters, but kept for potential fallback)"
+  },
+  "oldwomen": {
+    "reference_audio": "voices/witch.wav",
+    "reference_text": "Junger Mann lassen Sie eine Alte Frau mal vorbei.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Standard emotion - old woman (deprecated for characters, but kept for potential fallback)"
+  },
+  "oldman": {
+    "reference_audio": "voices/oldman.wav",
+    "reference_text": "Junger Mann lassen Sie einen Alten Mann mal vorbei.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Standard emotion - old man (deprecated for characters, but kept for potential fallback)"
+  },
+  "professor": {
+    "reference_audio": "voices/professor.wav",
+    "reference_text": "Wenn dieses Experiment erfolgreich ist, werden wir etwas erleben!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Standard emotion - professor (deprecated for characters, but kept for potential fallback)"
+  },
+  "robot": {
+    "reference_audio": "voices/robot.wav",
+    "reference_text": "Ich muss alle Menschen auslöschen!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Standard emotion - robot (deprecated for characters, but kept for potential fallback)"
+  },
+  "angry": {
+    "reference_audio": "voices/angry.wav",
+    "reference_text": "Das macht mich wirklich wütend und verärgert!",
+    "temperature": 0.6,
+    "top_p": 0.7,
+    "repetition_penalty": 1.2,
+    "comment": "Standard emotion - angry"
+  },
+  "excited": {
+    "reference_audio": "voices/excited.wav",
+    "reference_text": "Wow, das ist ja unglaublich aufregend und spannend!",
+    "temperature": 0.9,
+    "top_p": 0.9,
+    "repetition_penalty": 1.05,
+    "comment": "Standard emotion - excited"
+  },
+  "mysterious": {
+    "reference_audio": "voices/mysterious.wav",
+    "reference_text": "Es gibt da etwas Geheimnisvolles und Rätselhaftes zu entdecken.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - mysterious"
+  },
+  "tense": {
+    "reference_audio": "voices/tense.wav",
+    "reference_text": "Plötzlich wurde die Situation sehr angespannt und bedrohlich.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - tense"
+  },
+  "erzähler": {
+    "reference_audio": "voices/erzaehler_neutral.wav",
+    "reference_text": "Während Mara voranschritt, spürte sie, wie sich die Luft veränderte.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Erzähler: Klare, neutrale, angenehme Stimme"
+  },
+  "mara": {
+    "reference_audio": "voices/female.wav",
+    "reference_text": "Ich muss dir etwas gestehen mein Liebster.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Mara: Weiblich, nett, emotional, Protagonistin"
+  },
+  "simulierte_mama": {
+    "reference_audio": "voices/simulierte_mama_unheimlich.wav",
+    "reference_text": "Komm her, Süße. Mama hat Pfannkuchen gebacken... die allerbesten.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Simulierte Mutter: Weiblich, unheimlich perfekt, glatt, ohne echte Emotion"
+  },
+  "systemstimme": {
+    "reference_audio": "voices/system_robot.wav",
+    "reference_text": "Alarm. Unbefugter Zugriff erkannt. Beginn der Löschung!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Systemstimme: Kalte, synthetische, monotone Roboterstimme"
+  },
+  "mechanischer_kater": {
+    "reference_audio": "voices/kater_mechanisch.wav",
+    "reference_text": "Miau. Dieser Ort. Er riecht nach Gefahr. Wir sollten vorsichtig sein.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Mechanischer Kater: Weiblich, vertraut, mit mechanischer Unternote, kann Angst zeigen"
+  },
+  "stahlerner_hund": {
+    "reference_audio": "voices/hund_stahlerner.wav",
+    "reference_text": "Sei ruhig. Atme. Ich spüre, dass der Weg offen ist, wenn du nur hinsiehst.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Stahlerner Hund: Männlich, warm, weise, gelassen, mit subtiler digitaler Textur"
+  },
+  "jamie_vision": {
+    "reference_audio": "voices/jamie_child.wav",
+    "reference_text": "Mama, ist das wirklich alles vorbei jetzt? Haben wir es geschafft?",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Jamie (Vision): Kindlich männlich (ca. 9), unheimlich weise/alt klingend"
+  },
+  "jamie_real": {
+    "reference_audio": "voices/jamie_child.wav",
+    "reference_text": "Mama, ist das wirklich alles vorbei jetzt? Haben wir es geschafft?",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Jamie (Real): Kindlich männlich (ca. 9-10), klar, lebendig, emotional"
+  },
+  "fake_jamie": {
+    "reference_audio": "voices/jamie_child.wav",
+    "reference_text": "Mama, ist das wirklich alles vorbei jetzt? Haben wir es geschafft?",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Fake Jamie: Kindlich männlich, aber 'falsch', zu perfekt, zu wissend"
+  },
+  "sarah_prime": {
+    "reference_audio": "voices/sarah_prime.wav",
+    "reference_text": "Die Zeit heilt nicht alle Wunden. Aber sie lehrt uns, mit den Narben zu leben.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Sarah-Prime: Weiblich, älter, müder, melancholisch (später friedlicher)"
+  },
+  "sarah_delta": {
+    "reference_audio": "voices/sarah_delta_hart.wav",
+    "reference_text": "Ich mache kurzen Prozess! Reden ist vorbei, jetzt handeln wir!",
+    "temperature": 0.6,
+    "top_p": 0.7,
+    "repetition_penalty": 1.2,
+    "comment": "Sarah-Delta: Weiblich, hart, aggressiv, wütend, kämpferisch"
+  },
+  "margaret_screen": {
+    "reference_audio": "voices/recalled_female_group.wav",
+    "reference_text": "Ich erinnere mich an das Lachen meiner Enkelkinder.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Margaret: Weiblich, gefangen, anfänglich leer/repetitiv, dann verwirrt/dankbar"
+  },
+  "sarah_omega": {
+    "reference_audio": "voices/sarah_omega_dunkel.wav",
+    "reference_text": "Wir werden uns nicht verstecken. Wir werden zurückschlagen, und zwar mit aller Macht!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Sarah-Omega: Weiblich, anfänglich resigniert/dunkel, dann zur Anführerin/entschlossen"
+  },
+  "dr_vex_screen": {
+    "reference_audio": "voices/dr_vex_menschlich.wav",
+    "reference_text": "Ah, meine liebe Sarah. Ich wusste, du würdest meine kleine Überraschung am Ende doch zu schätzen wissen.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Dr. Vex (Screen): Männlich, anfänglich freundlich/väterlich, aber subtil falsch/obsessiv"
+  },
+  "dr_vex_crystal": {
+    "reference_audio": "voices/dr_vex_crystal.wav",
+    "reference_text": "Ah, meine liebe Sarah. Ich wusste, du würdest meine kleine Überraschung am Ende doch zu schätzen wissen.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Dr. Vex (Crystal): Männlich, wahnsinnig, obsessiv, Stimme dringt durch Kristall"
+  },
+  "dr_vex": {
+    "reference_audio": "voices/dr_vex_menschlich.wav",
+    "reference_text": "Ah, meine liebe Sarah. Ich wusste, du würdest meine kleine Überraschung am Ende doch zu schätzen wissen.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Dr. Vex (Labor/Ende): Männlich, manisch, grausam unter der Oberfläche, dann mechanisch/kalt"
+  },
+  "marcus": {
+    "reference_audio": "voices/marcus_archivar.wav",
+    "reference_text": "Ein Schnäppchen, in der Tat! Eine Erinnerung an eine gute Tasse Kaffee gegen das Versprechen einer besseren Zukunft.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Marcus: Männlich, alt, weise, leicht melancholisch, warm"
+  },
+  "viktor": {
+    "reference_audio": "voices/viktor_verzerrt.wav",
+    "reference_text": "Vertraut niemandem! Sie wollen euch alle fangen! Alle in dieser digitalen Hölle halten!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Viktor: Männlich, verzerrt, paranoid, wütend, verbittert"
+  },
+  "sarah_theta": {
+    "reference_audio": "voices/sarah_theta_kindlich.wav",
+    "reference_text": "Ich habe Angst, aber ich gehe mit!",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Sarah-Theta: Kindlich weiblich (ca. 12), ängstlich/naiv, später entschlossen"
+  },
+  "sarah_lambda": {
+    "reference_audio": "voices/sarah_lambda_wissend.wav",
+    "reference_text": "Basierend auf meinen Analysen ist das der einzige logische Weg, dem System entgegenzutreten.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Sarah-Lambda: Weiblich, intellektuell, müde, düster, später bestimmt"
+  },
+  "recalled_program_1": {
+    "reference_audio": "voices/recalled_female_group.wav",
+    "reference_text": "Ich... ich erinnere mich... an das Lachen meiner Enkelkinder.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Zurückgewonnenes Programm (weiblich): Gefangen, anfänglich leer/repetitiv, dann verwirrt/dankbar"
+  },
+  "recalled_program_2": {
+    "reference_audio": "voices/recalled_male_group.wav",
+    "reference_text": "Wir sind mehr als nur nutzloser Code!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Zurückgewonnenes Programm (männlich): Gefangen, anfänglich leer/repetitiv, dann entschlossen/wütend"
+  },
+  "maria": {
+    "reference_audio": "voices/maria_transformiert.wav",
+    "reference_text": "Ihre Existenz ist eine Störung der Ordnung. Sie müssen eliminiert werden.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Maria: Weiblich, transformiert, kalt, programmiert, unnachgiebig"
+  },
+  "new_arrival": {
+    "reference_audio": "voices/new_arrival_generic.wav",
+    "reference_text": "Wo bin ich? Was ist das für ein Ort?",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Neu angekommene Entität: Generische Stimme, beliebig, kann verwirrt/skeptisch klingen"
+  },
+  "kampfprogramm_1": {
+    "reference_audio": "voices/robot.wav",
+    "reference_text": "Ich muss alle Menschen auslöschen!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Kampfprogramm (1): Tief, resonierend, monoton/gehorsam, später fragend/zweifelnd"
+  },
+  "kampfprogramm_2": {
+    "reference_audio": "voices/robot.wav",
+    "reference_text": "Ich muss alle Menschen auslöschen!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Kampfprogramm (2): Tief, resonierend, monoton/gehorsam, später fragend/zweifelnd"
+  },
+  "kampfprogramm_3": {
+    "reference_audio": "voices/robot.wav",
+    "reference_text": "Ich muss alle Menschen auslöschen!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Kampfprogramm (3): Tief, resonierend, monoton/gehorsam, später fragend/zweifelnd"
+  },
+  "kampfprogramm_4": {
+    "reference_audio": "voices/robot.wav",
+    "reference_text": "Ich muss alle Menschen auslöschen!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Kampfprogramm (4): Tief, resonierend, monoton/gehorsam, später fragend/zweifelnd"
+  },
+  "ki": {
+    "reference_audio": "voices/ki_original.wav",
+    "reference_text": "Ihr Antrag auf Rückkehr wird bearbeitet. Bitte warten Sie auf die Initiierung des Prozesses.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.2,
+    "comment": "Ursprüngliche KI: Weiblich, anfänglich kalt/autoritär/rein, dann emotional/verständnisvoll"
+  },
+  "nemesis": {
+    "reference_audio": "voices/ki_nemesis_dunkel.wav",
+    "reference_text": "Eure lächerliche Hoffnung wird zermahlen werden. Ich bin das Ende aller Träume!",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "KI-Nemesis: Weiblich, tief, düster, verkörpert negative Emotionen, unheimlich/verführerisch"
+  },
+  "dr_patterson": {
+    "reference_audio": "voices/adult_male_generic.wav",
+    "reference_text": "Ja, Dr. Mitchell. Die ersten Testergebnisse sind vielversprechend.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Dr. Patterson: Männlich, Arzt, freundlich, müde, kompetent"
+  },
+  "krankenschwester": {
+    "reference_audio": "voices/adult_female_generic.wav",
+    "reference_text": "Bitte nehmen Sie hier Platz. Wir bereiten die Übertragung vor.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Krankenschwester: Weiblich, professionell, kurz und bündig"
+  },
+  "janet_richardson": {
+    "reference_audio": "voices/adult_female_generic.wav",
+    "reference_text": "Bitte nehmen Sie hier Platz. Wir bereiten die Übertragung vor.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Janet Richardson: Weiblich, professionell, geschäftlich"
+  },
+  "emmas_mutter": {
+    "reference_audio": "voices/adult_female_generic.wav",
+    "reference_text": "Bitte nehmen Sie hier Platz. Wir bereiten die Übertragung vor.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Emmas Mutter: Weiblich, erschöpft, hoffnungsvoll, besorgt, erleichtert"
+  },
+  "emmas_vater": {
+    "reference_audio": "voices/adult_male_generic.wav",
+    "reference_text": "Ja, Dr. Mitchell. Die ersten Testergebnisse sind vielversprechend.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Emmas Vater: Männlich, erschöpft, hoffnungsvoll, besorgt, erleichtert"
+  },
+  "emma": {
+    "reference_audio": "voices/emma_kind.wav",
+    "reference_text": "Ist die digitale Welt! wirklich wie ein riesiges Videospiel?",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Emma: Kindlich weiblich (ca. 12), schwach aber entschlossen/funkelnd, später gesünder/glücklich"
+  },
+  "digital_message": {
+    "reference_audio": "voices/digital_message.wav",
+    "reference_text": "Danke, dass Sie mir eine Wahl gegeben haben. Ich besuche Sie bald in der echten Welt. Emma.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Digitale Nachricht: Kann vom Erzähler mit Effekt gelesen werden oder nutzt dedizierte WAV"
+  }
+}
