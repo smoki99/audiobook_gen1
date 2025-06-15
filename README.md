@@ -2,6 +2,8 @@
 
 Dieses Projekt enthält Skripte zur automatisierten Generierung von Hörbüchern mithilfe der Fish Speech TTS API.
 
+python audiobook_generator.py /mnt/d/dev/fish_generatorfiles/projects/alien-horror/input-text/ /mnt/d/dev/fish_generatorfiles/projects/alien-horror/audio-output /mnt/d/dev/fish_generatorfiles/projects/alien-horror/voice_config.json 
+
 ## Voraussetzungen
 
 - Python 3.8 oder höher

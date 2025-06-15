@@ -13,6 +13,7 @@ import re
 import glob
 import random
 import datetime
+import csv
 from pathlib import Path
 from fish_speech_tts import FishSpeechTTS
 
@@ -25,13 +26,23 @@ except ImportError:
     print("To enable concatenation, install pydub: pip install pydub")
     HAS_PYDUB = False
 
+def load_mapping_csv(csv_path):
+    mapping = {}
+    with open(csv_path, encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            # Annahme: CSV hat Spalten 'raw_text' und 'mapped_text'
+            mapping[row['raw_text'].strip()] = row['mapped_text'].strip()
+    return mapping
+    
 def extract_voice_tag(line):
     """Extract voice tag from text line and remove the tag"""
-    voice_match = re.search(r'\[(\w+)\]', line)
+    # Erfasst Buchstaben, Zahlen, Unterstriche UND deutsche Umlaute
+    voice_match = re.search(r'\[([a-zA-Z0-9-_äöüÄÖÜß\s]+)\]', line)
     if voice_match:
-        voice = voice_match.group(1)
+        voice = voice_match.group(1).strip()
         # Remove the voice tag from the line
-        clean_line = re.sub(r'\[\w+\]', '', line).strip()
+        clean_line = re.sub(r'\[[a-zA-Z0-9-_äöüÄÖÜß\s]+\]', '', line).strip()
         return voice, clean_line
     return "default", line.strip()
 
@@ -141,14 +152,16 @@ def process_text_file(file_path, output_dir, voice_config, tts_client):
         
         # Extract voice tag and clean line
         voice, clean_text = extract_voice_tag(line)
-        
+
         # Skip if clean text is empty after tag removal
         if not clean_text:
             continue
         
         # Get voice configuration (use default if specified voice doesn't exist)
+
         voice_params = voice_config.get(voice, voice_config.get("default", {}))
-        
+        print(voice_params)
+
         # Make a copy of the parameters to avoid modifying the original
         params = voice_params.copy()
         
@@ -190,7 +203,8 @@ def process_text_file(file_path, output_dir, voice_config, tts_client):
             params["reference_audio"] = params.pop("ref_audio")
         if "ref_text" in params:
             params["reference_text"] = params.pop("ref_text")
-        
+    
+
         # Remove parameters that shouldn't be passed to TTS function
         for param_to_remove in ["speed", "reference_audio_set", "comment"]:
             if param_to_remove in params:

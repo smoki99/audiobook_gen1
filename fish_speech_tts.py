@@ -86,7 +86,7 @@ class FishSpeechTTS:
             "repetition_penalty": repetition_penalty,
             "temperature": temperature,
             "streaming": False,
-            "use_memory_cache": "off",
+            "use_memory_cache": "on",
             "seed": seed,
         }
         
