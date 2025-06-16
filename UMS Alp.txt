@@ -1,0 +1,49 @@
+IPA-Laut,Deutsches Wort,IPA des Wortes,CMU Arpabet (konvertiert)
+iː,Liebe,ˈliːbə,IY
+ɪ,bitte,ˈbɪtə,IH
+eː,gehen,ˈɡeːən,EY
+ɛ,Bett,bɛt,EH
+ɛː,Bär,bɛːɐ̯,EH EH
+a,Mann,man,AA
+aː,Name,ˈnaːmə,AA
+oː,Sohn,zoːn,OW
+ɔ,offen,ˈʔɔfn̩,AO
+uː,du,duː,UW
+ʊ,muss,mʊs,UH
+yː,über,ˈyːbɐ,Y UW
+ʏ,müssen,ˈmʏsn̩,Y UH
+øː,schön,ʃøːn,ER
+œ,Hölle,ˈhœlə,ER
+ə,bitte,ˈbɪtə,AH
+ɐ,Mutter,ˈmʊtɐ,AH
+aɪ,mein,maɪ̯n,AY
+aʊ,Haus,haʊ̯s,AW
+ɔʏ,heute,ˈhɔʏ̯tə,OY
+p,Pferd,pfeːɐ̯t,P
+b,Ball,bal,B
+t,Tag,taːk,T
+d,Dorf,dɔʁf,D
+k,Kuh,kuː,K
+ɡ,gut,ɡuːt,G
+f,Fenster,ˈfɛnstɐ,F
+v,Vater,ˈfaːtɐ,V
+s,Sonne,ˈzɔnə,S
+z,Sahne,ˈzaːnə,Z
+ʃ,Schule,ˈʃuːlə,SH
+ʒ,Genie,ʒeˈniː,ZH
+ç,ich,ɪç,HH Y
+x,Bach,bax,K HH
+h,Haus,haʊ̯s,HH
+m,Mutter,ˈmʊtɐ,M
+n,Nase,ˈnaːzə,N
+ŋ,singen,ˈzɪŋən,NG
+l,Lampe,ˈlampə,L
+j,ja,ja,Y
+r,rot,ʁoːt,R
+ʔ,beachten,bəˈʔaxtn̩,Q
+ts,Zeit,tsaɪ̯t,TS
+tʃ,Tschüss,tʃʏs,CH
+dʒ,Dschungel,ˈdʒʊŋl̩,JH
+θ,θeta (fiktiv),θeːta,TH
+ð,ða (fiktiv),ða,DH
+ɹ,red (englisch),ɹɛd,R

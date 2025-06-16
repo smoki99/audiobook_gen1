@@ -27,22 +27,70 @@ except ImportError:
     HAS_PYDUB = False
 
 def load_mapping_csv(csv_path):
+    """Load word mappings from CSV file"""
     mapping = {}
-    with open(csv_path, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            # Annahme: CSV hat Spalten 'raw_text' und 'mapped_text'
-            mapping[row['raw_text'].strip()] = row['mapped_text'].strip()
+    if not csv_path or not os.path.exists(csv_path):
+        return mapping
+        
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            # Try to detect if the CSV has headers
+            sample = f.read(1024)
+            f.seek(0)
+            
+            # Check if first line looks like headers
+            first_line = f.readline().strip()
+            f.seek(0)
+            
+            reader = csv.reader(f)
+            
+            # Skip header if it exists (contains non-quoted alphabetic content)
+            if not first_line.startswith('"') and any(c.isalpha() for c in first_line.split(',')[0]):
+                next(reader, None)  # Skip header row
+                
+            for row in reader:
+                if len(row) >= 2:
+                    # Clean quotes from CSV values
+                    original = row[0].strip(' "')
+                    mapped = row[1].strip(' "')
+                    if original and mapped:
+                        mapping[original] = mapped
+                        
+        print(f"✅ Loaded {len(mapping)} word mappings from {csv_path}")
+        if len(mapping) > 0:
+            # Show first few mappings as examples
+            sample_mappings = list(mapping.items())[:3]
+            for orig, mapped in sample_mappings:
+                print(f"  - '{orig}' → '{mapped}'")
+            if len(mapping) > 3:
+                print(f"  ... and {len(mapping) - 3} more")
+                
+    except Exception as e:
+        print(f"⚠️ Error loading mapping CSV: {e}")
+        
     return mapping
+
+def apply_text_mapping(text, mapping):
+    """Apply word mappings to text"""
+    if not mapping:
+        return text
+        
+    # Apply mappings (case-sensitive, whole word matching)
+    mapped_text = text
+    for original, mapped in mapping.items():
+        # Use word boundaries to ensure whole word matching
+        pattern = r'\b' + re.escape(original) + r'\b'
+        mapped_text = re.sub(pattern, mapped, mapped_text)
+        
+    return mapped_text
     
 def extract_voice_tag(line):
     """Extract voice tag from text line and remove the tag"""
-    # Erfasst Buchstaben, Zahlen, Unterstriche UND deutsche Umlaute
-    voice_match = re.search(r'\[([a-zA-Z0-9-_äöüÄÖÜß\s]+)\]', line)
+    voice_match = re.search(r'\[([^\[\]]+)\]', line)
     if voice_match:
         voice = voice_match.group(1).strip()
         # Remove the voice tag from the line
-        clean_line = re.sub(r'\[[a-zA-Z0-9-_äöüÄÖÜß\s]+\]', '', line).strip()
+        clean_line = re.sub(r'\[[^\[\]]+\]', '', line).strip()
         return voice, clean_line
     return "default", line.strip()
 
@@ -127,7 +175,7 @@ def concatenate_audio_files(audio_files, output_file, format="wav"):
         print(f"❌ Error concatenating audio files: {e}")
         return False
 
-def process_text_file(file_path, output_dir, voice_config, tts_client):
+def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping=None):
     """Process a single text file and generate audio for each line"""
     base_name = Path(file_path).stem
     print(f"\n📄 Processing file: {file_path}")
@@ -157,8 +205,14 @@ def process_text_file(file_path, output_dir, voice_config, tts_client):
         if not clean_text:
             continue
         
+        # Apply word mapping if provided
+        if word_mapping:
+            original_text = clean_text
+            clean_text = apply_text_mapping(clean_text, word_mapping)
+            if clean_text != original_text:
+                print(f"🔄 Text mapping applied: '{original_text[:30]}...' → '{clean_text[:30]}...'")
+        
         # Get voice configuration (use default if specified voice doesn't exist)
-
         voice_params = voice_config.get(voice, voice_config.get("default", {}))
         print(voice_params)
 
@@ -261,13 +315,22 @@ def get_current_time_utc():
 def main():
     """Main function to process text files and generate audio"""
     # Check command line arguments
-    if len(sys.argv) != 4:
-        print("Usage: python audiobook_generator.py <input_dir> <output_dir> <voice_config_file>")
+    if len(sys.argv) < 4 or len(sys.argv) > 5:
+        print("Usage: python audiobook_generator.py <input_dir> <output_dir> <voice_config_file> [mapping.csv]")
+        print("\nArguments:")
+        print("  input_dir        - Directory containing text files to process")
+        print("  output_dir       - Directory where audio files will be saved")
+        print("  voice_config_file - JSON file with voice configurations")
+        print("  mapping.csv      - (Optional) CSV file with word mappings")
+        print("\nExample:")
+        print("  python audiobook_generator.py ./texts ./output voices.json")
+        print("  python audiobook_generator.py ./texts ./output voices.json mapping.csv")
         sys.exit(1)
     
     input_dir = sys.argv[1]
     output_dir = sys.argv[2]
     voice_config_file = sys.argv[3]
+    mapping_csv = sys.argv[4] if len(sys.argv) == 5 else None
     
     # Check if directories exist
     if not os.path.isdir(input_dir):
@@ -276,6 +339,9 @@ def main():
     
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
+    
+    # Load word mapping if provided
+    word_mapping = load_mapping_csv(mapping_csv) if mapping_csv else {}
     
     # Load voice configuration
     try:
@@ -324,7 +390,7 @@ def main():
     total_lines = 0
     
     for file_path in text_files:
-        file_successful, file_total = process_text_file(file_path, output_dir, voice_config, tts_client)
+        file_successful, file_total = process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping)
         total_successful += file_successful
         total_lines += file_total
     
@@ -332,6 +398,8 @@ def main():
     print("\n📊 Zusammenfassung:")
     print(f"🔹 {len(text_files)} Datei(en) verarbeitet")
     print(f"🔹 {total_successful}/{total_lines} Audiodateien generiert")
+    if word_mapping:
+        print(f"🔹 {len(word_mapping)} Wort-Mappings angewendet")
     if HAS_PYDUB:
         print(f"🔹 {len(text_files)} zusammengeführte Audiodateien erstellt")
     print(f"🔹 Ausgabeverzeichnis: {output_dir}")

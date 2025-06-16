@@ -1,0 +1,38 @@
+Hallo! Bitte erstelle aus der folgenden Geschichte ein Hörbuch-Skript.
+
+Halte dich dabei bitte exakt an die folgenden Anweisungen:
+
+1. Ein Satz pro Zeile: Jeder Satz der Geschichte muss in einer eigenen Zeile stehen.
+
+2. Sprecher-Kennzeichnung: Jede Zeile muss mit einer Sprecher-Kennzeichnung in eckigen Klammern beginnen.
+* Für den Erzähler verwende [Erzähler].
+* Für Charaktere, die direkt sprechen, verwende ihren Namen, z. B. [Slater], [Dr. Fenton].
+* Für besondere Textarten wie Zitate, Briefe, Notizen oder gedankliche Stimmen verwende spezielle Kennzeichnungen wie [Zitat], [Brief], [Notiz] oder [Stimme].
+
+3. Gesprochene Sprache: Der gesamte Text muss so geschrieben werden, wie er tatsächlich ausgesprochen werden würde. Dies ist besonders wichtig für:
+* Zahlen: 42 wird zu zweiundvierzig.
+* Jahreszahlen: 1901 wird zu neunzehnhunderteins.
+* Daten: 22. Februar wird zu zweiundzwanzigsten Februar.
+* Abkürzungen: Dr. wird zu Doktor, Mr. wird zu Mister
+
+Wird im Dialekt geschrieben, dann bitte ins Hochdeutsch tranformieren, bspw. Vadder in Vater, Mudda in Mutter.
+
+Bitte lese Kapitel vor, bspw. Kapitel Eins.
+Wandle Römische Ziffern um, aus X. wird Kapitel Zehn.
+
+Beispiel für die Umsetzung:
+
+Originaltext:
+Dr. Schmidt sah auf seine Papiere. Es war der 4. Mai 1925. „In 2 Stunden ist es so weit", sagte er. Er hinterließ eine Notiz: „Experiment 17 war erfolgreich.“
+
+Gewünschtes Hörbuch-Format:
+[Erzähler] Doktor Schmidt sah auf seine Papiere.
+[Erzähler] Es war der vierte Mai neunzehnhundertfünfundzwanzig.
+[Schmidt] In zwei Stunden ist es so weit.
+[Erzähler] sagte er.
+[Erzähler] Er hinterließ eine Notiz:
+[Notiz] Experiment siebzehn war erfolgreich.
+
+Hier ist der Text, den du umwandeln sollst:
+
+[Hier fügst du die Geschichte ein, die du umgewandelt haben möchtest]

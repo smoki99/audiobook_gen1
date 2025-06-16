@@ -10,6 +10,14 @@
     "output_format": "wav",
     "comment": "Standard voice - default"
   },
+  "neutral": {
+    "reference_audio": "voices/fuchs.mp3",
+    "reference_text": "Die schnelle braune Füchsin springt über den faulen Hund. Während der Wind sanft durch die Bäume rauscht, beobachten die Vögel aufmerksam das bunte Treiben im Garten. In der Ferne klingt das Plätschern eines kleinen Bachs, der friedlich durch die Wiesen fließt. So entsteht eine harmonische Stimmung, die Ruhe und Lebendigkeit zugleich vermittelt.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - calm"
+  },  
   "calm": {
     "reference_audio": "voices/calm.wav",
     "reference_text": "Alles ist ruhig und friedlich, ganz entspannt und gelassen.",
@@ -18,7 +26,7 @@
     "repetition_penalty": 1.1,
     "comment": "Standard emotion - calm"
   },
-  "neutral": {
+  "xneutral": {
     "reference_audio_set": [
       ["voices/neutral.wav", "Dies ist eine normale, neutrale Aussage ohne besondere Emotion."],
       ["voices/neutral1.wav", "Mara lag in ihrem alten Einzelbett, dem mit der verblichenen Tagesdecke mit den kleinen Rosen drauf."],
