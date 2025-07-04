@@ -254,37 +254,155 @@ def create_silent_wav(duration_ms: int, filename: str = None, channels: int = 1,
         return None
 
 def concatenate_audio_files(audio_files, output_file, format="wav"):
-    """Concatenate multiple audio files into a single file"""
+    """Concatenate multiple audio files into a single file and return timing information"""
     if not HAS_PYDUB:
         print("❌ Audio concatenation failed: pydub not installed")
-        return False
+        return False, None
     
     if not audio_files:
         print("⚠️ No audio files to concatenate")
-        return False
+        return False, None
     
     try:
         # Load the first audio file
         combined = AudioSegment.from_file(audio_files[0], format=format)
         
+        # Track timing information for SRT subtitles
+        timing_info = []
+        current_time = 0.0
+        
+        # Add timing for first file
+        first_duration = len(combined) / 1000.0  # Convert ms to seconds
+        timing_info.append({
+            'start': current_time,
+            'end': current_time + first_duration,
+            'duration': first_duration
+        })
+        current_time += first_duration
+        
         # Add a small pause between segments (500ms)
         random_duration = random.randint(250, 600)
         pause = AudioSegment.silent(duration=random_duration)
+        pause_duration = random_duration / 1000.0  # Convert ms to seconds
         
         # Append the rest
         for audio_file in audio_files[1:]:
             segment = AudioSegment.from_file(audio_file, format=format)
             combined += pause + segment
+            
+            # Track timing including pause
+            current_time += pause_duration
+            segment_duration = len(segment) / 1000.0  # Convert ms to seconds
+            timing_info.append({
+                'start': current_time,
+                'end': current_time + segment_duration,
+                'duration': segment_duration
+            })
+            current_time += segment_duration
         
         # Export the combined file
         combined.export(output_file, format=format)
         
         file_size = os.path.getsize(output_file) / 1024  # KB
         print(f"✅ Combined audio saved: {output_file} ({file_size:.1f} KB)")
-        return True
+        return True, timing_info
     
     except Exception as e:
         print(f"❌ Error concatenating audio files: {e}")
+        return False, None
+
+def format_srt_timestamp(seconds):
+    """Format seconds as SRT timestamp (HH:MM:SS,MS)"""
+    # Handle floating-point precision issues by rounding to 3 decimal places
+    seconds = round(seconds, 3)
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = int(seconds % 60)
+    milliseconds = int(round((seconds % 1) * 1000))
+    return f"{hours:02d}:{minutes:02d}:{secs:02d},{milliseconds:03d}"
+
+def clean_subtitle_text(text):
+    """Clean text for subtitle display by removing emotion tags and formatting"""
+    # Remove emotion tags like (angry), (sad), etc.
+    # Use a more robust approach to handle nested parentheses
+    while '(' in text and ')' in text:
+        # Find the first opening parenthesis
+        start = text.find('(')
+        if start == -1:
+            break
+        
+        # Find the matching closing parenthesis
+        count = 1
+        end = start + 1
+        while end < len(text) and count > 0:
+            if text[end] == '(':
+                count += 1
+            elif text[end] == ')':
+                count -= 1
+            end += 1
+        
+        # If we found a matching closing parenthesis, remove the content
+        if count == 0:
+            text = text[:start] + text[end:]
+        else:
+            # If no matching closing parenthesis, just remove the opening one
+            text = text[:start] + text[start+1:]
+    
+    # Remove extra whitespace
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    # Filter out silence markers
+    if text == "...":
+        return ""
+    
+    return text
+
+def create_srt_subtitles(subtitle_texts, timing_info, output_srt_path):
+    """Create SRT subtitle file with accurate timestamps
+    
+    Args:
+        subtitle_texts: List of text content for each audio segment
+        timing_info: List of timing dictionaries with start, end, duration
+        output_srt_path: Path for the output SRT file
+        
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    if not subtitle_texts or not timing_info:
+        print("⚠️ No subtitle texts or timing information provided")
+        return False
+    
+    if len(subtitle_texts) != len(timing_info):
+        print(f"⚠️ Mismatch: {len(subtitle_texts)} subtitle texts vs {len(timing_info)} timing entries")
+        return False
+    
+    try:
+        srt_entries = []
+        
+        for i, (subtitle_text, timing) in enumerate(zip(subtitle_texts, timing_info)):
+            # Clean subtitle text
+            clean_text = clean_subtitle_text(subtitle_text)
+            if not clean_text:
+                # Skip empty text entries
+                continue
+            
+            # Format timestamps
+            start_timestamp = format_srt_timestamp(timing['start'])
+            end_timestamp = format_srt_timestamp(timing['end'])
+            
+            # Create SRT entry
+            srt_entry = f"{len(srt_entries) + 1}\n{start_timestamp} --> {end_timestamp}\n{clean_text}\n"
+            srt_entries.append(srt_entry)
+        
+        # Write SRT file
+        with open(output_srt_path, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(srt_entries))
+        
+        print(f"✅ SRT subtitles created: {output_srt_path} ({len(srt_entries)} entries)")
+        return True
+    
+    except Exception as e:
+        print(f"❌ Error creating SRT subtitles: {e}")
         return False
 
 def check_audio_completeness(audio_path, expected_duration_estimate):
@@ -645,6 +763,7 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
     successful_lines = 0
     total_lines = 0
     generated_files = []
+    subtitle_texts = []  # Track text content for subtitles
     output_format = voice_config.get("default", {}).get("output_format", "wav")
     
     for i, line in enumerate(lines):
@@ -705,6 +824,7 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
             print(f"⏭️ Skipping existing file: {final_output_path}")
             successful_lines += 1
             generated_files.append(final_output_path)
+            subtitle_texts.append(clean_text_with_emotions)  # Store original text with emotions for subtitles
             continue
         
         # Get voice comment for logging if available
@@ -738,12 +858,14 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
                 print(f"⏭️ Skipping existing silence file: {final_output_path}")
                 successful_lines += 1
                 generated_files.append(final_output_path)
+                subtitle_texts.append("...")  # Add ellipsis for silence marker
                 continue
             # Eine längere Pause für die Ellipse
             created_path = create_silent_wav(duration_ms=700, filename=final_output_path)
             if created_path:
                 successful_lines += 1 # Zählt als erfolgreiche "Zeile"
                 generated_files.append(final_output_path)
+                subtitle_texts.append("...")  # Add ellipsis for silence marker
             continue
 
 
@@ -760,6 +882,7 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
             if success and audio_path:
                 successful_lines += 1
                 generated_files.append(audio_path)
+                subtitle_texts.append(clean_text_with_emotions)  # Store original text with emotions for subtitles
                 
         except TypeError as e:
             print(f"❌ Parameter error: {e}")
@@ -777,6 +900,7 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
                 if success and audio_path:
                     successful_lines += 1
                     generated_files.append(audio_path)
+                    subtitle_texts.append(clean_text_with_emotions)  # Store original text with emotions for subtitles
             except Exception as e2:
                 print(f"❌ Failed with default parameters too: {e2}")
     
@@ -786,7 +910,12 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
     if successful_lines > 0 and HAS_PYDUB and generated_files:
         print(f"\n🔄 Concatenating {successful_lines} audio segments into a single file...")
         concat_output = f"{output_dir}/{base_name}_concat.{output_format}"
-        concatenate_audio_files(generated_files, concat_output, format=output_format)
+        concatenation_success, timing_info = concatenate_audio_files(generated_files, concat_output, format=output_format)
+        
+        # Create SRT subtitles if concatenation was successful
+        if concatenation_success and timing_info and subtitle_texts:
+            srt_output = f"{output_dir}/{base_name}_concat.srt"
+            create_srt_subtitles(subtitle_texts, timing_info, srt_output)
     
     return successful_lines, total_lines
 

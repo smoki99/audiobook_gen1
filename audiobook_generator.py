@@ -224,38 +224,62 @@ def create_silent_wav(duration_ms: int, filename: str = None, channels: int = 1,
         return None
 
 def concatenate_audio_files(audio_files, output_file, format="wav"):
-    """Concatenate multiple audio files into a single file"""
+    """Concatenate multiple audio files into a single file and return timing information"""
     if not HAS_PYDUB:
         print("❌ Audio concatenation failed: pydub not installed")
-        return False
+        return False, None
     
     if not audio_files:
         print("⚠️ No audio files to concatenate")
-        return False
+        return False, None
     
     try:
         # Load the first audio file
         combined = AudioSegment.from_file(audio_files[0], format=format)
         
+        # Track timing information for SRT subtitles
+        timing_info = []
+        current_time = 0.0
+        
+        # Add timing for first file
+        first_duration = len(combined) / 1000.0  # Convert ms to seconds
+        timing_info.append({
+            'start': current_time,
+            'end': current_time + first_duration,
+            'duration': first_duration
+        })
+        current_time += first_duration
+        
         # Add a small pause between segments (500ms)
         random_duration = random.randint(250, 600)
         pause = AudioSegment.silent(duration=random_duration)
+        pause_duration = random_duration / 1000.0  # Convert ms to seconds
         
         # Append the rest
         for audio_file in audio_files[1:]:
             segment = AudioSegment.from_file(audio_file, format=format)
             combined += pause + segment
+            
+            # Track timing including pause
+            current_time += pause_duration
+            segment_duration = len(segment) / 1000.0  # Convert ms to seconds
+            timing_info.append({
+                'start': current_time,
+                'end': current_time + segment_duration,
+                'duration': segment_duration
+            })
+            current_time += segment_duration
         
         # Export the combined file
         combined.export(output_file, format=format)
         
         file_size = os.path.getsize(output_file) / 1024  # KB
         print(f"✅ Combined audio saved: {output_file} ({file_size:.1f} KB)")
-        return True
+        return True, timing_info
     
     except Exception as e:
         print(f"❌ Error concatenating audio files: {e}")
-        return False
+        return False, None
 
 def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping=None):
     """Process a single text file and generate audio for each line"""
@@ -394,7 +418,11 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
     if successful_lines > 0 and HAS_PYDUB and generated_files:
         print(f"\n🔄 Concatenating {successful_lines} audio segments into a single file...")
         concat_output = f"{output_dir}/{base_name}_concat.{output_format}"
-        concatenate_audio_files(generated_files, concat_output, format=output_format)
+        concatenation_success, timing_info = concatenate_audio_files(generated_files, concat_output, format=output_format)
+        
+        # Note: audiobook_generator.py doesn't track subtitle texts, so no SRT generation here
+        # To enable SRT generation, the process_text_file function would need to be updated
+        # to track subtitle texts like in improved_audiobook_generator.py
     
     return successful_lines, total_lines
 
