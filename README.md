@@ -92,13 +92,44 @@ Die `voice_config.json` enthält Konfigurationen für jede Stimme:
 Starten Sie den Generator mit:
 
 ```bash
-python audiobook_generator.py input_dir output_dir voice_config.json
+python audiobook_generator.py input_dir output_dir voice_config.json [mapping.csv] [--no-overwrite]
 ```
 
-Beispiel:
+**Parameter:**
+- `input_dir`: Verzeichnis mit den zu verarbeitenden Textdateien
+- `output_dir`: Ausgabeverzeichnis für die generierten Audiodateien
+- `voice_config.json`: JSON-Datei mit Stimmkonfigurationen
+- `mapping.csv`: (Optional) CSV-Datei mit Wort-Mappings
+- `--no-overwrite` / `-n`: (Optional) Überschreibt keine existierenden Dateien
+
+**Beispiele:**
 ```bash
+# Normale Verwendung
 python audiobook_generator.py input/ output/ voice_config.json
+
+# Mit Wort-Mappings
+python audiobook_generator.py input/ output/ voice_config.json mapping.csv
+
+# Überschreibt keine existierenden Dateien (für unterbrochene Verarbeitung)
+python audiobook_generator.py input/ output/ voice_config.json --no-overwrite
+
+# Kombiniert mit Wort-Mappings
+python audiobook_generator.py input/ output/ voice_config.json mapping.csv -n
 ```
+
+### Unterbrochene Verarbeitung fortsetzen
+
+Mit dem `--no-overwrite` Flag können Sie unterbrochene Verarbeitungen fortsetzen:
+
+- **Existierende Dateien werden übersprungen**: Bereits generierte WAV-Dateien werden nicht neu erstellt
+- **Neue Dateien werden generiert**: Fehlende Dateien werden normal erstellt
+- **Vollständige Konkatenation**: Alle Dateien (existierende + neue) werden zur finalen Audiodatei zusammengeführt
+- **Detaillierte Protokollierung**: Das Skript zeigt an, welche Dateien übersprungen und welche neu generiert wurden
+
+Dies ist besonders nützlich bei:
+- Längeren Hörbüchern, bei denen die Verarbeitung unterbrochen wurde
+- Selektiven Updates einzelner Textabschnitte
+- Wiederaufnahme nach Systemausfällen
 
 ## Parameter für Stimmen
 
