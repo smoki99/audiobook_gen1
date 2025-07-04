@@ -1,0 +1,5 @@
+[narrator]Welcome to chapter one of our test audiobook.
+[character1]Hello there! I'm excited to be here.
+[narrator]The character spoke with enthusiasm.
+...
+[narrator]After a pause, the story continued.

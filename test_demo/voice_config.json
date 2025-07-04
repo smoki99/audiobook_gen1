@@ -1,0 +1,19 @@
+{
+  "narrator": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "output_format": "wav"
+  },
+  "character1": {
+    "temperature": 0.9,
+    "output_format": "wav"
+  },
+  "character2": {
+    "temperature": 0.8,
+    "output_format": "wav"
+  },
+  "default": {
+    "temperature": 0.8,
+    "output_format": "wav"
+  }
+}
