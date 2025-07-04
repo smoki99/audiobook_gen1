@@ -121,3 +121,45 @@ Für die Eingabedatei `kapitel1.txt` mit 3 Zeilen würden folgende Dateien gener
 - `output/kapitel1_001.wav`
 - `output/kapitel1_002.wav`
 - `output/kapitel1_concat.wav` (Zusammenführung aller Audiodateien)
+- `output/kapitel1_concat.srt` (SRT-Untertitel für die Audiodatei)
+
+## SRT-Untertitel Export
+
+Das System generiert automatisch SRT-Untertiteldateien für jede zusammengeführte Audiodatei. Diese Funktion bietet:
+
+### Funktionen
+- **Automatische Erstellung**: SRT-Dateien werden automatisch zusammen mit der zusammengeführten Audiodatei erstellt
+- **Präzise Zeitstempel**: Basierend auf den tatsächlichen Audiodauern und Pausen
+- **Textbereinigung**: Emotions-Tags wie `(angry)`, `(sad)` werden aus den Untertiteln entfernt
+- **Sequenzielle Nummerierung**: Standard-SRT-Format mit fortlaufender Nummerierung
+- **UTF-8 Kodierung**: Vollständige Unterstützung für deutsche Sonderzeichen
+
+### SRT-Format
+```
+1
+00:00:00,000 --> 00:00:02,500
+Dies ist die erste Zeile des Hörbuchs.
+
+2
+00:00:02,850 --> 00:00:05,200
+Hier kommt die zweite Zeile.
+
+3
+00:00:05,550 --> 00:00:07,800
+Und so weiter...
+```
+
+### Verwendung
+Die SRT-Funktion ist standardmäßig aktiviert und erfordert keine zusätzliche Konfiguration:
+
+```bash
+python3 improved_audiobook_generator.py input/ output/ voice_config.json
+```
+
+Dies generiert sowohl die Audiodateien als auch die entsprechenden SRT-Untertitel.
+
+### Kompatibilität
+- Funktioniert mit allen Audiobook-Generator-Varianten
+- Unterstützt die `--no-overwrite` Option
+- Automatische Behandlung von Pausen zwischen Segmenten
+- Berücksichtigt alle Stimmen-Tags und Konfigurationen

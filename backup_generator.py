@@ -283,18 +283,48 @@ def concatenate_audio_files(audio_files, output_file, format="wav"):
 
 def format_srt_timestamp(seconds):
     """Format seconds as SRT timestamp (HH:MM:SS,MS)"""
+    # Handle floating-point precision issues by rounding to 3 decimal places
+    seconds = round(seconds, 3)
     hours = int(seconds // 3600)
     minutes = int((seconds % 3600) // 60)
     secs = int(seconds % 60)
-    milliseconds = int((seconds % 1) * 1000)
+    milliseconds = int(round((seconds % 1) * 1000))
     return f"{hours:02d}:{minutes:02d}:{secs:02d},{milliseconds:03d}"
 
 def clean_subtitle_text(text):
     """Clean text for subtitle display by removing emotion tags and formatting"""
     # Remove emotion tags like (angry), (sad), etc.
-    text = re.sub(r'\([^)]*\)', '', text)
+    # Use a more robust approach to handle nested parentheses
+    while '(' in text and ')' in text:
+        # Find the first opening parenthesis
+        start = text.find('(')
+        if start == -1:
+            break
+        
+        # Find the matching closing parenthesis
+        count = 1
+        end = start + 1
+        while end < len(text) and count > 0:
+            if text[end] == '(':
+                count += 1
+            elif text[end] == ')':
+                count -= 1
+            end += 1
+        
+        # If we found a matching closing parenthesis, remove the content
+        if count == 0:
+            text = text[:start] + text[end:]
+        else:
+            # If no matching closing parenthesis, just remove the opening one
+            text = text[:start] + text[start+1:]
+    
     # Remove extra whitespace
     text = re.sub(r'\s+', ' ', text).strip()
+    
+    # Filter out silence markers
+    if text == "...":
+        return ""
+    
     return text
 
 def create_srt_subtitles(subtitle_texts, timing_info, output_srt_path):
