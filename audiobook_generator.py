@@ -15,6 +15,7 @@ import glob
 import random
 import datetime
 import csv
+import argparse
 from pathlib import Path
 from fish_speech_tts import FishSpeechTTS
 
@@ -257,7 +258,7 @@ def concatenate_audio_files(audio_files, output_file, format="wav"):
         print(f"❌ Error concatenating audio files: {e}")
         return False
 
-def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping=None):
+def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping=None, no_overwrite=False):
     """Process a single text file and generate audio for each line"""
     base_name = Path(file_path).stem
     print(f"\n📄 Processing file: {file_path}")
@@ -326,6 +327,13 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
         output_filename = f"{output_dir}/{base_name}_{i:03d}"
         final_output_path = f"{output_filename}.{output_format}"
         
+        # Check if file already exists and skip if no-overwrite is enabled
+        if no_overwrite and os.path.exists(final_output_path):
+            print(f"⏭️ Skipping existing file: {final_output_path}")
+            successful_lines += 1
+            generated_files.append(final_output_path)
+            continue
+        
         # Get voice comment for logging if available
         voice_comment = voice_params.get("comment", "")
         if voice_comment:
@@ -352,6 +360,12 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
         # --- Spezialfall für '...' Pausen ---
         if clean_text.strip() == "...":
             print(f"⏱️ Detected silence marker '...'. Generating 2000ms silent WAV file.")
+            # Check if file already exists and skip if no-overwrite is enabled
+            if no_overwrite and os.path.exists(final_output_path):
+                print(f"⏭️ Skipping existing silence file: {final_output_path}")
+                successful_lines += 1
+                generated_files.append(final_output_path)
+                continue
             # Eine längere Pause für die Ellipse
             created_path = create_silent_wav(duration_ms=700, filename=final_output_path)
             if created_path:
@@ -452,27 +466,39 @@ def natural_sort_key(s):
 
 def get_current_time_utc():
     """Get current UTC time in YYYY-MM-DD HH:MM:SS format"""
-    return datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 def main():
     """Main function to process text files and generate audio"""
-    # Check command line arguments
-    if len(sys.argv) < 4 or len(sys.argv) > 5:
-        print("Usage: python audiobook_generator.py <input_dir> <output_dir> <voice_config_file> [mapping.csv]")
-        print("\nArguments:")
-        print("  input_dir        - Directory containing text files to process")
-        print("  output_dir       - Directory where audio files will be saved")
-        print("  voice_config_file - JSON file with voice configurations")
-        print("  mapping.csv      - (Optional) CSV file with word mappings")
-        print("\nExample:")
-        print("  python audiobook_generator.py ./texts ./output voices.json")
-        print("  python audiobook_generator.py ./texts ./output voices.json mapping.csv")
-        sys.exit(1)
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Generate audiobooks using Fish Speech TTS",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python audiobook_generator.py ./texts ./output voices.json
+  python audiobook_generator.py ./texts ./output voices.json --mapping mapping.csv
+  python audiobook_generator.py ./texts ./output voices.json --no-overwrite
+        """
+    )
     
-    input_dir = sys.argv[1]
-    output_dir = sys.argv[2]
-    voice_config_file = sys.argv[3]
-    mapping_csv = sys.argv[4] if len(sys.argv) == 5 else None
+    parser.add_argument("input_dir", help="Directory containing text files to process")
+    parser.add_argument("output_dir", help="Directory where audio files will be saved")
+    parser.add_argument("voice_config_file", help="JSON file with voice configurations")
+    parser.add_argument("--mapping", metavar="CSV_FILE", help="CSV file with word mappings")
+    parser.add_argument("--no-overwrite", action="store_true", 
+                       help="Skip generation for existing WAV files")
+    
+    args = parser.parse_args()
+    
+    input_dir = args.input_dir
+    output_dir = args.output_dir
+    voice_config_file = args.voice_config_file
+    mapping_csv = args.mapping
+    no_overwrite = args.no_overwrite
+    
+    if no_overwrite:
+        print("ℹ️ No-overwrite mode enabled: existing WAV files will be skipped")
     
     # Check if directories exist
     if not os.path.isdir(input_dir):
@@ -532,7 +558,7 @@ def main():
     total_lines = 0
     
     for file_path in text_files:
-        file_successful, file_total = process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping)
+        file_successful, file_total = process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping, no_overwrite)
         total_successful += file_successful
         total_lines += file_total
     
