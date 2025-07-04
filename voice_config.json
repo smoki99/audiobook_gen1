@@ -10,9 +10,41 @@
     "output_format": "wav",
     "comment": "Standard voice - default"
   },
-  "neutral": {
+  "Erzähler_old": {
     "reference_audio": "voices/fuchs.mp3",
     "reference_text": "Die schnelle braune Füchsin springt über den faulen Hund. Während der Wind sanft durch die Bäume rauscht, beobachten die Vögel aufmerksam das bunte Treiben im Garten. In der Ferne klingt das Plätschern eines kleinen Bachs, der friedlich durch die Wiesen fließt. So entsteht eine harmonische Stimmung, die Ruhe und Lebendigkeit zugleich vermittelt.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - calm"
+  },
+  "Erzähler": {
+    "reference_audio": "/mnt/d/dev/fish_generatorfiles/ownVoice/eric_fuchs.wav",
+    "reference_text": "Die schnelle braune Füchsin springt über den faulen Hund. Während der Wind sanft durch die Bäume rauscht, beobachten die Vögel aufmerksam das bunte Treiben im Garten. In der Ferne klingt das Plätschern eines kleinen Bachs, der friedlich durch die Wiesen fließt. So entsteht eine harmonische Stimmung, die Ruhe und Lebendigkeit zugleich vermittelt.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - calm"
+  },
+  "Erzähler2y": {
+    "reference_audio": "/mnt/d/dev/fish_generatorfiles/voices-google/mastervoice/output.wav",
+    "reference_text": "Die schnelle braune Füchsin springt über den faulen Hund. Während der Wind sanft durch die Bäume rauscht, beobachten die Vögel aufmerksam das bunte Treiben im Garten. In der Ferne klingt das Plätschern eines kleinen Bachs, der friedlich durch die Wiesen fließt. So entsteht eine harmonische Stimmung, die Ruhe und Lebendigkeit zugleich vermittelt. (angry) Das ist absolut inakzeptabel! Ich habe dir doch ganz klar gesagt, wie das zu erledigen ist, und du hast es einfach ignoriert. Diese Nachlässigkeit werde ich nicht tolerieren, es muss Konsequenzen geben! (sad) Ihr Abschied hat eine tiefe Leere in meinem Herzen hinterlassen. Ich vermisse die gemeinsamen Momente und die unbeschwerte Zeit, die wir teilten. Es ist schwer, sich vorzustellen, wie es ohne sie weitergehen soll. (excited) Ich kann es kaum erwarten, dass das Konzert beginnt! Die Vorfreude prickelt in jeder Faser meines Körpers, und ich bin so gespannt auf die neuen Lieder. Das wird ein unvergesslicher Abend, ganz bestimmt! (surprised) (astonished) Das ist ja unglaublich! Ich hätte niemals damit gerechnet, dass wir diese Auszeichnung bekommen würden. Es ist eine Ehre und eine riesige Überraschung für uns alle. (satisfied) Endlich ist das Projekt abgeschlossen, und das Ergebnis übertrifft alle Erwartungen. Es war eine Menge Arbeit, aber es hat sich gelohnt, jedes einzelne Detail ist perfekt. Ich bin sehr zufrieden mit dem, was wir erreicht haben. (delighted) Welch eine wundervolle Nachricht, ich bin außer mir vor Freude! Das ist das schönste Geschenk, das man sich nur wünschen kann, und es zaubert mir ein breites Lächeln ins Gesicht. Ich könnte den ganzen Tag tanzen vor lauter Glück. (scared) Ein plötzlicher Schatten huschte über die Mauer, und mein Herz setzte einen Schlag aus. Ich spürte eine eisige Kälte, die mir den Rücken hinunterlief, und wagte kaum, mich umzudrehen. Was, wenn da jemand war? (worried) Ich mache mir wirklich Sorgen um ihre Gesundheit. Sie sah heute Morgen so blass aus und hat seit Tagen kaum etwas gegessen. Ich hoffe sehr, dass es nichts Ernstes ist und sie bald wieder auf den Beinen ist. (upset) Ich bin wirklich verärgert über diese Entscheidung. Es ist unfair und berücksichtigt unsere Bemühungen überhaupt nicht. Manchmal frage ich mich, ob sie uns überhaupt zuhören. (nervous) Meine Hände zittern leicht, und mein Magen fühlt sich an, als ob Schmetterlinge darin herumfliegen. Gleich ist der große Moment da, und ich hoffe so sehr, dass alles gut geht. Ich muss mich jetzt einfach konzentrieren.",
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - calm"
+  },
+  "ErzählerEric": {
+    "reference_audio": "/mnt/d/dev/fish_generatorfiles/ownVoice/eric_sonne.wav",
+    "reference_text": "Die Sonne ging langsam über den Horizont unter und tauchte die Landschaft in ein warmes, goldenes Licht. Die Schatten wurden länger und tanzten im sanften Wind, der durch die hohen Gräser strich. Ein Gefühl der Ruhe breitete sich aus, während der Tag allmählich der Nacht wich. Am Himmel erschienen die ersten Sterne, funkelnd wie winzige Diamanten auf einem dunklen Samt. Die Luft wurde kühler, und der Duft von feuchter Erde und blühenden Blumen erfüllte die Abendstille. Es war ein Moment von stiller Schönheit, der zum Innehalten einlud und die Gedanken zur Ruhe brachte. Die Welt schien für einen Augenblick stillzustehen, gefangen in der Magie des Übergangs. Ein leises Rascheln im Gebüsch verriet die Anwesenheit kleiner Nachttiere, die nun aus ihren Verstecken kamen. Der Mond begann seinen Aufstieg, ein blasses Scheibenlicht, das die Dunkelheit sanft erhellte. Eine perfekte Kulisse für den Beginn einer langen Nacht voller Geheimnisse und Träume.",
+    "temperature": 0.8,
+    "top_p": 0.8,
+    "repetition_penalty": 1.1,
+    "comment": "Standard emotion - calm"
+  },  
+  "Erzähler2xx": {
+    "reference_audio": "/mnt/d/dev/fish_generatorfiles/voices-google/Algenib_Sonne.wav",
+    "reference_text": "Die Sonne ging langsam über den Horizont unter und tauchte die Landschaft in ein warmes, goldenes Licht. Die Schatten wurden länger und tanzten im sanften Wind, der durch die hohen Gräser strich. Ein Gefühl der Ruhe breitete sich aus, während der Tag allmählich der Nacht wich. Am Himmel erschienen die ersten Sterne, funkelnd wie winzige Diamanten auf einem dunklen Samt. Die Luft wurde kühler, und der Duft von feuchter Erde und blühenden Blumen erfüllte die Abendstille. Es war ein Moment von stiller Schönheit, der zum Innehalten einlud und die Gedanken zur Ruhe brachte. Die Welt schien für einen Augenblick stillzustehen, gefangen in der Magie des Übergangs. Ein leises Rascheln im Gebüsch verriet die Anwesenheit kleiner Nachttiere, die nun aus ihren Verstecken kamen. Der Mond begann seinen Aufstieg, ein blasses Scheibenlicht, das die Dunkelheit sanft erhellte. Eine perfekte Kulisse für den Beginn einer langen Nacht voller Geheimnisse und Träume.",
     "temperature": 0.7,
     "top_p": 0.8,
     "repetition_penalty": 1.1,

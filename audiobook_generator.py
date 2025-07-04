@@ -6,6 +6,7 @@ This script processes text files, applies voice configurations from a JSON file,
 and generates audio using the Fish Speech TTS API.
 """
 
+import wave
 import os
 import sys
 import json
@@ -16,6 +17,34 @@ import datetime
 import csv
 from pathlib import Path
 from fish_speech_tts import FishSpeechTTS
+
+# 1. Definieren der bekannten Emotionen, Tone Makers und Special Audio Effects
+# Wir extrahieren sie direkt aus dem bereitgestellten Text 
+# -> (scared) wurde entfernt, da es immer wieder zu problemen geführt hat
+raw_tags_string = """
+(angry) (sad) (excited) (surprised) (satisfied) (delighted)
+(worried) (upset) (nervous) (frustrated) (depressed)
+(empathetic) (embarrassed) (disgusted) (moved) (proud) (relaxed)
+(grateful) (confident) (interested) (curious) (confused) (joyful)
+(disdainful) (unhappy) (anxious) (indifferent)
+(scornful) (panicked) (reluctant)
+(disapproving) (negative) (denying) (serious)
+(sarcastic) (conciliative) (comforting) (sincere) (sneering)
+(hesitating) (yielding) (painful) (awkward) (amused)
+
+Tone Makers:
+(in a hurry tone) (shouting) (screaming) (whispering) (soft tone)
+
+Special Audio effect:
+(laughing) (chuckling) (crying loudly) (sighing) (panting)
+(groaning) (crowd laughing) (background laughter) (audience laughing)
+(break) (long-break)
+"""
+
+# Verwenden von Regular Expressions, um alle Inhalte innerhalb von Klammern zu finden
+# und sie in ein Set umzuwandeln, um Duplikate zu vermeiden, dann in eine Liste
+allowed_emotions = sorted(list(set(re.findall(r'\((.*?)\)', raw_tags_string))))
+
 
 # Check for required libraries
 try:
@@ -142,6 +171,58 @@ def select_reference_audio(reference_config):
     print(f"⚠️ Unknown reference format: {reference_config}")
     return None, None
 
+def create_silent_wav(duration_ms: int, filename: str = None, channels: int = 1, sampwidth: int = 2, framerate: int = 44100):
+    """
+    Erstellt eine WAV-Datei mit digitaler Stille.
+
+    Args:
+        duration_ms (int): Die Dauer der Stille in Millisekunden.
+        filename (str, optional): Der gewünschte Dateiname. 
+                                Wenn nicht angegeben, wird ein Name wie 'stille_1000ms.wav' generiert.
+        channels (int, optional): Anzahl der Kanäle (1 für Mono, 2 für Stereo). Standard ist 1.
+        sampwidth (int, optional): Sample-Breite in Bytes (1 für 8-bit, 2 für 16-bit). Standard ist 2.
+        framerate (int, optional): Die Abtastrate in Hz. Standard ist 44100.
+
+    Returns:
+        str: Der absolute Pfad zur erstellten Datei.
+    """
+    
+    # Wenn kein Dateiname angegeben wurde, einen generieren
+    if filename is None:
+        filename = f"stille_{duration_ms}ms.wav"
+    
+    # Sicherstellen, dass die Dateiendung .wav ist
+    if not filename.lower().endswith('.wav'):
+        filename += '.wav'
+
+    # --- Berechnungen ---
+    duration_s = duration_ms / 1000.0
+    num_frames = int(duration_s * framerate)
+    
+    # Erzeuge die stillen Bytes
+    # b'\x00' repräsentiert ein Null-Byte, also Stille
+    silent_bytes = b'\x00' * (num_frames * channels * sampwidth)
+    
+    # --- Datei erstellen ---
+    try:
+        with wave.open(filename, 'wb') as wav_file:
+            # WAV-Header-Parameter setzen
+            wav_file.setnchannels(channels)
+            wav_file.setsampwidth(sampwidth)
+            wav_file.setframerate(framerate)
+            wav_file.setnframes(num_frames)
+            wav_file.setcomptype("NONE", "not compressed")
+
+            # Die stillen Audio-Daten schreiben
+            wav_file.writeframes(silent_bytes)
+        
+        # Gebe den vollständigen Pfad der erstellten Datei zurück
+        return os.path.abspath(filename)
+
+    except Exception as e:
+        print(f"Fehler beim Erstellen der Datei '{filename}': {e}")
+        return None
+
 def concatenate_audio_files(audio_files, output_file, format="wav"):
     """Concatenate multiple audio files into a single file"""
     if not HAS_PYDUB:
@@ -157,7 +238,8 @@ def concatenate_audio_files(audio_files, output_file, format="wav"):
         combined = AudioSegment.from_file(audio_files[0], format=format)
         
         # Add a small pause between segments (500ms)
-        pause = AudioSegment.silent(duration=500)
+        random_duration = random.randint(250, 600)
+        pause = AudioSegment.silent(duration=random_duration)
         
         # Append the rest
         for audio_file in audio_files[1:]:
@@ -199,7 +281,10 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
         total_lines += 1
         
         # Extract voice tag and clean line
-        voice, clean_text = extract_voice_tag(line)
+        voice, clean_text_with_emotions = extract_voice_tag(line)
+
+        # Remove unallowed emotions
+        clean_text = clean_script_text(clean_text_with_emotions, allowed_emotions)
 
         # Skip if clean text is empty after tag removal
         if not clean_text:
@@ -264,6 +349,17 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
             if param_to_remove in params:
                 params.pop(param_to_remove)
         
+        # --- Spezialfall für '...' Pausen ---
+        if clean_text.strip() == "...":
+            print(f"⏱️ Detected silence marker '...'. Generating 2000ms silent WAV file.")
+            # Eine längere Pause für die Ellipse
+            created_path = create_silent_wav(duration_ms=700, filename=final_output_path)
+            if created_path:
+                successful_lines += 1 # Zählt als erfolgreiche "Zeile"
+                generated_files.append(final_output_path)
+            continue
+
+
         # Generate speech with appropriate parameters
         try:
             # Generate directly to output file
@@ -301,6 +397,52 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
         concatenate_audio_files(generated_files, concat_output, format=output_format)
     
     return successful_lines, total_lines
+
+
+def clean_script_text(text_to_clean, known_tags):
+    """
+    Entfernt alle Klammerausdrücke (z.B. '(invalid_tag)'),
+    es sei denn, der Inhalt der Klammern ist in der Liste der bekannten Tags.
+
+    Args:
+        text_to_clean (str): Der Eingabetext, der bereinigt werden soll.
+        known_tags (list): Eine Liste von Strings, die die erlaubten Tag-Inhalte sind.
+
+    Returns:
+        str: Der bereinigte Text.
+    """
+    # Regulärer Ausdruck, um (beliebiger_inhalt) zu finden
+    # Der Inhalt in den Klammern wird in Gruppe 1 erfasst
+    pattern = re.compile(r'\((.*?)\)')
+
+    def replace_match(match):
+        # Den Inhalt innerhalb der Klammern extrahieren (Gruppe 1)
+        tag_content = match.group(1)
+        # Überprüfen, ob der Inhalt in unseren bekannten Tags ist
+        if tag_content in known_tags:
+            # Wenn ja, behalte den Original-Tag bei (Gruppe 0 ist der gesamte Treffer inklusive Klammern)
+            return match.group(0)
+        else:
+            # Wenn nein, entferne den Tag, indem ein leerer String zurückgegeben wird
+            return ""
+
+    # Führe die Ersetzung durch, wobei die Funktion replace_match für jeden Treffer aufgerufen wird
+    cleaned_text = pattern.sub(replace_match, text_to_clean)
+    
+    # Remove all but one
+    matches = re.findall(r'\([^)]*\)', cleaned_text)
+
+    # Keep the first (...) group only
+    if matches:
+        first = matches[0]
+        # Remove all (...) groups
+        cleaned_text = re.sub(r'\([^)]*\)', '', cleaned_text)
+        # Strip extra spaces and prepend the first (...) group
+        cleaned_text = first + ' ' + re.sub(r'\s+', ' ', cleaned_text).strip()
+    else:
+        cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
+
+    return cleaned_text
 
 def natural_sort_key(s):
     """

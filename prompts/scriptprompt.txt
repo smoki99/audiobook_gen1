@@ -2,7 +2,7 @@ Hallo! Bitte erstelle aus der folgenden Geschichte ein Hörbuch-Skript.
 
 Halte dich dabei bitte exakt an die folgenden Anweisungen:
 
-1. Ein Satz pro Zeile: Jeder Satz der Geschichte muss in einer eigenen Zeile stehen.
+1. Maximal 4 Sätze pro Zeile: Wähle die Sätze so, dass sie möglichst gut zusammen im Context stehen.
 
 2. Sprecher-Kennzeichnung: Jede Zeile muss mit einer Sprecher-Kennzeichnung in eckigen Klammern beginnen.
 * Für den Erzähler verwende [Erzähler].
@@ -15,7 +15,7 @@ Halte dich dabei bitte exakt an die folgenden Anweisungen:
 * Daten: 22. Februar wird zu zweiundzwanzigsten Februar.
 * Abkürzungen: Dr. wird zu Doktor, Mr. wird zu Mister
 
-Wird im Dialekt geschrieben, dann bitte ins Hochdeutsch tranformieren, bspw. Vadder in Vater, Mudda in Mutter.
+Wird im Dialekt geschrieben, dann bitte ins Hochdeutsch tranformieren, bspw. Vadder in Vater, Mudda in Mutter. Worte die getrennt werden, wie beispielsweise "Re-be-cca" bite die Bindestriche entfernen und in "Rebecca" umwandeln.
 
 Bitte lese Kapitel vor, bspw. Kapitel Eins.
 Wandle Römische Ziffern um, aus X. wird Kapitel Zehn.
@@ -32,6 +32,48 @@ Gewünschtes Hörbuch-Format:
 [Erzähler] sagte er.
 [Erzähler] Er hinterließ eine Notiz:
 [Notiz] Experiment siebzehn war erfolgreich.
+
+Originaltext:
+Er wollte gerade zur Tür gehen, die ins Arbeitszimmer führte, als Orabona ihn mit einem Wort und einer Geste aufhielt. Mr. Rogers, sagte der Mann mit einer sanften, etwas akzentuierten Stimme, die zugleich entschuldigend und vage sardonisch klang, sei nicht da, und es gäbe eine ständige Anweisung, niemanden während seiner Abwesenheit ins Arbeitszimmer zuzulassen. Was das Aufheulen angeht, so sei es zweifellos etwas draußen im Hof hinter dem Museum gewesen. Diese Nachbarschaft sei voll von streunenden Kötern, und ihre Kämpfe seien manchmal erschreckend laut. Es gäbe keine Hunde in irgendeinem Teil des Museums. Aber wenn Mr. Jones Mr. Rogers sehen wollte, könnte er ihn kurz vor Ladenschluss finden.
+
+Gewünschtes Hörbuch-Format:
+[Erzähler] Er wollte gerade zur Tür gehen, die ins Arbeitszimmer führte, als Orabona ihn mit einem Wort und einer Geste aufhielt.
+[Orabona] (soft tone) Mister Rogers ist nicht da.
+[Erzähler] sagte der Mann mit einer sanften, etwas akzentuierten Stimme, die zugleich entschuldigend und vage sardonisch klang.
+[Orabona] Es gibt eine ständige Anweisung, Sie während seiner Abwesenheit nicht ins Arbeitszimmer zuzulassen.
+[Orabona] Was das Aufheulen angeht, so war es zweifellos etwas draußen im Hof hinter dem Museum.
+[Orabona] Diese Nachbarschaft ist voll von streunenden Kötern, und ihre Kämpfe sind manchmal erschreckend laut.
+[Orabona] Es gibt keine Hunde in irgendeinem Teil des Museums.
+[Orabona] Aber wenn Sie Mister Rogers sehen wollen, könnten Sie ihn kurz vor Ladenschluss finden.
+
+Um Spannung aufzubauen, kannst du ... hinzufügen, auch innerhalb von Sätzen, damit die Spannung und emotionen entsprechend aufgebaut sind. Bitte setzte auch Punkte und Kommas nicht nach Rechtschreibregeln, sondern um den Lesefluss zu kontrollieren.
+  Das Komma , für kurze Pausen.
+  Den Punkt . für längere Pausen.
+  Drei Punkte ... für lange Pausen.
+
+Punkte und Kommas sind dein Taktstock. Setze sie, um den Rhythmus zu steuern, nicht die Grammatik.
+, ist ein kurzer Atemzug, der Gedanken verbindet. Hier ist kein Zeilenumbruch notwendig.
+. ist ein fester Abschluss eines Gedankens, eine mittlere Pause. Hier bitte einen Zeilenumbruch.
+... ist eine Kunstpause. Eine Waffe für Spannung und Nachdenklichkeit. Nutze sie oft in einer eigenen Zeile, um ihr maximales Gewicht zu geben.
+
+Emotional Tags. Bitte füge Emotions vor dem Satz hinzu, um darstellen das hier ein Emotionaler Ausruck notwendig ist. Folgende Emtions sind bekannt:
+(angry) (sad) (excited) (surprised) (satisfied) (delighted) 
+(worried) (upset) (nervous) (frustrated) (depressed)
+(empathetic) (embarrassed) (disgusted) (moved) (proud) (relaxed)
+(grateful) (confident) (interested) (curious) (confused) (joyful)
+(disdainful) (unhappy) (anxious) (hysterical) (indifferent) 
+(impatient) (guilty) (scornful) (panicked) (furious) (reluctant)
+(keen) (disapproving) (negative) (denying) (astonished) (serious)
+(sarcastic) (conciliative) (comforting) (sincere) (sneering)
+(hesitating) (yielding) (painful) (awkward) (amused)
+
+Tone Makers und Special Effects können innerhalb der Sätze genutzt werden, wenn benötigt
+(in a hurry tone) (shouting) (screaming) (whispering) (soft tone) 
+(laughing) (chuckling) (sobbing) (crying loudly) (sighing) (panting)
+(groaning) (crowd laughing) (background laughter) (audience laughing)
+
+Bitte Tags nicht mit kommas trennen statt, beispielsweise:
+Statt (scared, worried) getrennt (scared) (worried) 
 
 Hier ist der Text, den du umwandeln sollst:
 
