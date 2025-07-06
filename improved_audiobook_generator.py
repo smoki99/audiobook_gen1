@@ -257,11 +257,11 @@ def concatenate_audio_files(audio_files, output_file, format="wav"):
     """Concatenate multiple audio files into a single file"""
     if not HAS_PYDUB:
         print("❌ Audio concatenation failed: pydub not installed")
-        return False
+        return False, []
     
     if not audio_files:
         print("⚠️ No audio files to concatenate")
-        return False
+        return False, []
     
     try:
         # Load the first audio file
@@ -271,21 +271,43 @@ def concatenate_audio_files(audio_files, output_file, format="wav"):
         random_duration = random.randint(250, 600)
         pause = AudioSegment.silent(duration=random_duration)
         
+        # Track the timestamps of each segment for subtitle generation
+        segment_timestamps = []
+        current_position_ms = 0
+        
+        # Add the first segment
+        first_segment = AudioSegment.from_file(audio_files[0], format=format)
+        segment_timestamps.append((0, len(first_segment)))
+        current_position_ms = len(first_segment)
+        
         # Append the rest
         for audio_file in audio_files[1:]:
+            # Add pause
+            combined += pause
+            current_position_ms += random_duration
+            
+            # Add audio segment
             segment = AudioSegment.from_file(audio_file, format=format)
-            combined += pause + segment
+            combined += segment
+            
+            # Record timestamp
+            segment_start = current_position_ms
+            segment_end = segment_start + len(segment)
+            segment_timestamps.append((segment_start, segment_end))
+            
+            # Update position
+            current_position_ms = segment_end
         
         # Export the combined file
         combined.export(output_file, format=format)
         
         file_size = os.path.getsize(output_file) / 1024  # KB
         print(f"✅ Combined audio saved: {output_file} ({file_size:.1f} KB)")
-        return True
+        return True, segment_timestamps
     
     except Exception as e:
         print(f"❌ Error concatenating audio files: {e}")
-        return False
+        return False, []
 
 def check_audio_completeness(audio_path, expected_duration_estimate):
     """
@@ -631,6 +653,96 @@ def generate_with_quality_control(tts_client, text, output_filename, params, num
     
     return False, None
 
+def format_timestamp(ms):
+    """
+    Format milliseconds to SRT timestamp format: HH:MM:SS,MS
+    
+    Args:
+        ms (int): Time in milliseconds
+        
+    Returns:
+        str: Formatted timestamp string
+    """
+    total_seconds = ms // 1000
+    milliseconds = ms % 1000
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d},{milliseconds:03d}"
+
+def clean_subtitle_text(text):
+    """
+    Clean text for subtitle display by removing emotion tags and extra spaces
+    
+    Args:
+        text (str): Input text with potential emotion tags
+        
+    Returns:
+        str: Cleaned text suitable for subtitle display
+    """
+    # Remove all text within parentheses (emotion tags)
+    cleaned = re.sub(r'\([^)]*\)', '', text)
+    # Remove extra whitespace
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    return cleaned
+
+def generate_subtitle_file(subtitle_entries, output_file):
+    """
+    Generate an SRT subtitle file from timestamp entries
+    
+    Args:
+        subtitle_entries (list): List of tuples containing (index, start_time, end_time, text)
+        output_file (str): Path to output SRT file
+        
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    try:
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for entry in subtitle_entries:
+                index, start_ms, end_ms, text = entry
+                
+                # Format start and end timestamps
+                start_timestamp = format_timestamp(start_ms)
+                end_timestamp = format_timestamp(end_ms)
+                
+                # Write SRT entry
+                f.write(f"{index}\n")
+                f.write(f"{start_timestamp} --> {end_timestamp}\n")
+                f.write(f"{text}\n\n")
+                
+        print(f"✅ Subtitle file generated: {output_file}")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error generating subtitle file: {e}")
+        return False
+
+def get_audio_duration(audio_path):
+    """
+    Get the duration of an audio file in milliseconds
+    
+    Args:
+        audio_path (str): Path to the audio file
+        
+    Returns:
+        int: Duration in milliseconds or 0 if unable to determine
+    """
+    try:
+        if HAS_PYDUB:
+            audio = AudioSegment.from_file(audio_path)
+            return len(audio)
+        else:
+            with wave.open(audio_path, 'rb') as wav:
+                frames = wav.getnframes()
+                rate = wav.getframerate()
+                duration = frames / float(rate)
+                return int(duration * 1000)
+    except Exception as e:
+        print(f"⚠️ Error getting audio duration: {e}")
+        return 0
+
 def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapping=None, num_retries=3, no_overwrite=False):
     """Process a single text file and generate audio for each line"""
     base_name = Path(file_path).stem
@@ -644,8 +756,15 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
     
     successful_lines = 0
     total_lines = 0
+    skipped_files = 0
     generated_files = []
     output_format = voice_config.get("default", {}).get("output_format", "wav")
+    
+    # Store subtitle information for each segment
+    subtitle_entries = []
+    
+    # Store original text for each generated file
+    file_texts = []
     
     for i, line in enumerate(lines):
         # Skip empty lines completely
@@ -700,11 +819,16 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
         output_filename = f"{output_dir}/{base_name}_{i:03d}"
         final_output_path = f"{output_filename}.{output_format}"
         
+        # Store the clean text for subtitle generation
+        subtitle_text = clean_subtitle_text(original_text)
+        
         # Check if file already exists and skip if no-overwrite is enabled
         if no_overwrite and os.path.exists(final_output_path):
             print(f"⏭️ Skipping existing file: {final_output_path}")
             successful_lines += 1
             generated_files.append(final_output_path)
+            file_texts.append(subtitle_text)
+            skipped_files += 1
             continue
         
         # Get voice comment for logging if available
@@ -738,12 +862,15 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
                 print(f"⏭️ Skipping existing silence file: {final_output_path}")
                 successful_lines += 1
                 generated_files.append(final_output_path)
+                file_texts.append("...")  # Store pause marker for subtitle
+                skipped_files += 1
                 continue
             # Eine längere Pause für die Ellipse
-            created_path = create_silent_wav(duration_ms=700, filename=final_output_path)
+            created_path = create_silent_wav(duration_ms=200, filename=final_output_path)
             if created_path:
                 successful_lines += 1 # Zählt als erfolgreiche "Zeile"
                 generated_files.append(final_output_path)
+                file_texts.append("...")  # Store pause marker for subtitle
             continue
 
 
@@ -760,6 +887,7 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
             if success and audio_path:
                 successful_lines += 1
                 generated_files.append(audio_path)
+                file_texts.append(subtitle_text)
                 
         except TypeError as e:
             print(f"❌ Parameter error: {e}")
@@ -777,18 +905,35 @@ def process_text_file(file_path, output_dir, voice_config, tts_client, word_mapp
                 if success and audio_path:
                     successful_lines += 1
                     generated_files.append(audio_path)
+                    file_texts.append(subtitle_text)
             except Exception as e2:
                 print(f"❌ Failed with default parameters too: {e2}")
     
     print(f"\n✅ Completed file {file_path}: {successful_lines}/{total_lines} lines processed successfully")
+    if skipped_files > 0:
+        print(f"🔹 {skipped_files} files skipped (already exist)")
     
     # Concatenate all generated audio files
     if successful_lines > 0 and HAS_PYDUB and generated_files:
-        print(f"\n🔄 Concatenating {successful_lines} audio segments into a single file...")
+        print(f"\n🔄 Concatenating {len(generated_files)} audio segments into a single file...")
         concat_output = f"{output_dir}/{base_name}_concat.{output_format}"
-        concatenate_audio_files(generated_files, concat_output, format=output_format)
+        success, segment_timestamps = concatenate_audio_files(generated_files, concat_output, format=output_format)
+        
+        # Generate subtitle file if concatenation was successful
+        if success and segment_timestamps and file_texts:
+            # Create subtitle entries
+            subtitle_entries = []
+            for i, ((start_time, end_time), text) in enumerate(zip(segment_timestamps, file_texts)):
+                # Skip empty subtitle texts or pause markers
+                if text and text != "...":
+                    subtitle_entries.append((i+1, start_time, end_time, text))
+            
+            # Generate SRT file
+            if subtitle_entries:
+                srt_output = f"{output_dir}/{base_name}_concat.srt"
+                generate_subtitle_file(subtitle_entries, srt_output)
     
-    return successful_lines, total_lines
+    return successful_lines, total_lines, skipped_files
 
 
 def clean_script_text(text_to_clean, known_tags):
@@ -938,9 +1083,11 @@ Examples:
     # Process each text file
     total_successful = 0
     total_lines = 0
+    total_skipped = 0
+    srt_files_created = 0
     
     for file_path in text_files:
-        file_successful, file_total = process_text_file(
+        file_successful, file_total, file_skipped = process_text_file(
             file_path, 
             output_dir, 
             voice_config, 
@@ -951,11 +1098,21 @@ Examples:
         )
         total_successful += file_successful
         total_lines += file_total
+        total_skipped += file_skipped
+        
+        # Check if SRT file was created
+        base_name = Path(file_path).stem
+        srt_path = f"{output_dir}/{base_name}_concat.srt"
+        if os.path.exists(srt_path):
+            srt_files_created += 1
     
     # Print summary
     print("\n📊 Zusammenfassung:")
     print(f"🔹 {len(text_files)} Datei(en) verarbeitet")
     print(f"🔹 {total_successful}/{total_lines} Audiodateien generiert")
+    if total_skipped > 0:
+        print(f"🔹 {total_skipped} vorhandene Dateien übersprungen (--no-overwrite)")
+    print(f"🔹 {srt_files_created} SRT-Untertiteldateien erstellt")
     print(f"🔹 {num_retries} Generierungsversuche pro Textzeile")
     if word_mapping:
         print(f"🔹 {len(word_mapping)} Wort-Mappings angewendet")

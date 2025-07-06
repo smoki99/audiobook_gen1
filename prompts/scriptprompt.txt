@@ -54,7 +54,7 @@ Um Spannung aufzubauen, kannst du ... hinzufügen, auch innerhalb von Sätzen, d
 Punkte und Kommas sind dein Taktstock. Setze sie, um den Rhythmus zu steuern, nicht die Grammatik.
 , ist ein kurzer Atemzug, der Gedanken verbindet. Hier ist kein Zeilenumbruch notwendig.
 . ist ein fester Abschluss eines Gedankens, eine mittlere Pause. Hier bitte einen Zeilenumbruch.
-... ist eine Kunstpause. Eine Waffe für Spannung und Nachdenklichkeit. Nutze sie oft in einer eigenen Zeile, um ihr maximales Gewicht zu geben.
+... ist eine Kunstpause. Eine Waffe für Spannung und Nachdenklichkeit. Nutze in einer eigenen Zeile und nicht am ende der Zeile, um ihr maximales Gewicht zu geben.
 
 Emotional Tags. Bitte füge Emotions vor dem Satz hinzu, um darstellen das hier ein Emotionaler Ausruck notwendig ist. Folgende Emtions sind bekannt:
 (angry) (sad) (excited) (surprised) (satisfied) (delighted) 
